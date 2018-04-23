@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from models import Profile, Studies
 from django.http import Http404
-from address.models import Address
+from
+ address.models import Address
 from django.http import HttpResponse
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.auth.models import Group
@@ -10,6 +11,24 @@ from django.utils import six
 from rest_framework.authtoken.models import Token
 
 from django.conf import settings
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
 
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
@@ -60,11 +79,7 @@ def signupMedic(request):
 def loginMedic(request):
     if request.method == 'POST':
         try:
-            name = request.POST['name']
-            identification_number = request.POST['identification_number']
-            profesional_number = request.POST['profesional_number']
             email = request.POST['email']
-            phone = request.POST['phone']
             password =  request.POST['password']
             person = Person.objects.create_user(email, email, password)
             person.first_name = name
