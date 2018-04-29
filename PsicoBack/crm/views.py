@@ -12,6 +12,7 @@ from django.core.mail import EmailMessage
 from django.http import Http404, HttpResponse, JsonResponse, HttpResponseForbidden
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 
 from .models import GROUP_MEDIC, Person
 from .serializers import PersonSerializer
@@ -46,7 +47,7 @@ class TokenGenerator(PasswordResetTokenGenerator):
 account_activation_token = TokenGenerator()
 
 
-#add appi decorator
+@api_view(['POST'])
 def signupMedic(request):
     if request.method == 'POST':
     #try:

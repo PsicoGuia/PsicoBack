@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'widget_tweaks',
 
     'medic',
+    'crm',
+    'pqr'
 ]
 
 MIDDLEWARE = [
