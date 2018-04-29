@@ -34,15 +34,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 
     'django_filters',
     'djmoney',
-    'geoposition',
+    #'geoposition',
     'address',
     'widget_tweaks',
 
-    'main',
-    'patient',
     'medic',
 ]
 

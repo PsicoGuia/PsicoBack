@@ -1,0 +1,10 @@
+Django==2.0.4
+django-address
+django-filter==1.1.0
+django-filters==0.2.1
+django-money==0.13.2
+django-widget-tweaks==1.4.2
+djangorestframework==3.8.2
+pep8==1.7.1
+py-moneyed==0.7.0
+pytz==2018.4

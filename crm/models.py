@@ -10,6 +10,7 @@ from address.models import AddressField
 '''
 At the time no additional user information has been used, but I know that I will be doing it
 '''
+GROUP_MEDIC ="MEDICS"
 def Person(User):
     phone = models.TextField(null=True, blank=True)
 

@@ -1,15 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from models import Profile, Studies
 from django.http import Http404
-from address.models import Address
+from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view, parser_classes, authentication_classes, permission_classes
+from rest_framework.parsers import JSONParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 
-from forms import SignUpForm, ProfileForm
-
+from .models import Profile
+from .serealizer import ProfileSerializer
 # Create your views here.
 def index(request):
     return render(request, 'medic/index.html', {})
 
+'''
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -41,3 +45,17 @@ def profile(request, username):
         return render(request, 'medic/profile.html', {'profile': profile, 'studies': studies, 'form': form})
     except Profile.DoesNotExist:
         raise Http404
+'''
+
+class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticated,) 
+
+
+class ProfileListProfile(generics.CreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    #permission_classes = (IsAuthenticated,) # Public APIView
+    
+

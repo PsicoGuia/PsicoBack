@@ -3,7 +3,6 @@ from .models import Person
 
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
+class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ('company_name',)

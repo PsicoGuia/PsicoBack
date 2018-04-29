@@ -5,8 +5,10 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from djmoney.models.fields import MoneyField
-from geoposition.fields import GeopositionField
+#from geoposition.fields import GeopositionField
 from address.models import AddressField
+
+from django.contrib.gis.db.models import PointField
 
 def profileFilePath(instance, filename):
     return 'medic/files/profiles/{0}/{1}'.format(instance.user.id, filename)
@@ -51,7 +53,7 @@ class Profile(models.Model):
 
     city = models.CharField(max_length=25, null=True)
     address = AddressField(blank=True, null=True)
-    location = GeopositionField()
+    position = PointField(geography=False, null=True, blank=True, default='POINT(0.0 0.0)')
 
     cost = MoneyField(
         decimal_places=2,
@@ -59,6 +61,9 @@ class Profile(models.Model):
         default_currency='COP',
         max_digits=11,
     )
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.user.get_username()
@@ -99,6 +104,10 @@ class Studies(models.Model):
     experienceYears = models.IntegerField()
     file = models.FileField(upload_to=studiesFilePath)
     certificated = models.BooleanField(default=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
     def getLevel(self):
         return dict(self.DEGREE)[self.level]
     def getUserName(self):
@@ -110,6 +119,9 @@ class AttentionChannel(models.Model):
     profile = ForeignKey(Profile, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
 
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
     class Meta:
         abstract = True
 
@@ -117,7 +129,7 @@ class ScheduleAttentionChannel(models.Model):
     # 0- None, 1-Monday, 5-Monday and Wendesday
     attention_channel = ForeignKey(AttentionChannel, on_delete=models.CASCADE)
     bitDays = models.IntegerField()
-    duration = models.DurationField()
+    duration = models.DurationField() #TODO CHECK
     
     class Meta:
         verbose_name = "Horario de canal de atención"
@@ -126,6 +138,7 @@ class ScheduleAttentionChannel(models.Model):
 
 class Office(AttentionChannel):
     description = models.TextField(null=True, blank=True)
+    position = PointField(geography=False, null=True, blank=True)
 
     class Meta:
         verbose_name = "Consultorio"
@@ -133,8 +146,11 @@ class Office(AttentionChannel):
 
 
 class ImageAttentionChannel(models.Model):
-    attention_channel = ForeignKey(AttentionChannel, on_delete=models.CASCADE)
+    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=profileFilePath)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
 
 
@@ -144,3 +160,40 @@ class Chat(AttentionChannel):
     class Meta:
         verbose_name = "Consultorio"
         verbose_name_plural = "Consultorios"
+
+class CategoryPatology(models.Model):
+    name = models.TextField(null=False, blank=False)
+    #categoryFather = models.ForeignKey(CategoryPatology, on_delete=models.CASCADE, null=True, blank=True)  #DEPRECATED
+
+    class Meta:
+        verbose_name = "Categoria de Patologías"
+        verbose_name_plural = "Categorias de Patologías"
+
+class Patology(models.Model):
+    name = models.TextField(null=False, blank=False)
+    category = models.ForeignKey(CategoryPatology, on_delete=models.CASCADE, null=False, blank=False)
+
+    class Meta:
+        verbose_name = "Patología"
+        verbose_name_plural = "Patologías"
+
+class ProfilePatologyOrCategory(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null=False, blank=False)
+    patology = models.ForeignKey(Patology, on_delete=models.CASCADE, null=True, blank=True) #Dinamical assign and filter
+    category = models.ForeignKey(CategoryPatology, on_delete=models.CASCADE, null=True, blank=True)
+    
+    class Meta:
+        verbose_name = "Patología o categoría del perfil"
+        verbose_name_plural = "Patologías o categorías del perfil"
+
+class RequestOrderMedicDate(models.Model):
+    name_pacient = models.TextField()
+    age_pacient = models.IntegerField()
+    patology_pacient = models.ForeignKey(Patology, on_delete=models.SET_NULL)
+    adicional_description_pacient = models.TextField()
+    email_pacient = models.TextField()
+    phone = models.TextField()
+    
+    class Meta:
+        verbose_name = "Petición de cita medica"
+        verbose_name_plural = "Peticiones de cita medica"
