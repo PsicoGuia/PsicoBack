@@ -52,7 +52,7 @@ class Profile(models.Model):
     professionalCardFile = models.ImageField(upload_to=profileFilePath, null=True)
 
     city = models.CharField(max_length=25, null=True)
-    address = AddressField(blank=True, null=True)
+    address = AddressField(blank=True, null=True, on_delete=models.CASCADE)
     position = PointField(geography=False, null=True, blank=True, default='POINT(0.0 0.0)')
 
     cost = MoneyField(
@@ -115,9 +115,30 @@ class Studies(models.Model):
     def __unicode__(self):
         return '%s - %s: %s'%(self.getUserName(), self.getLevel(), self.title)
 
+class ScheduleAttentionChannel(models.Model):
+    # 0- None, 1-Monday, 5-Monday and Wendesday
+    #attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
+    bitDays = models.IntegerField()
+    duration = models.DurationField() #TODO CHECK
+    
+    class Meta:
+        verbose_name = "Horario de canal de atención"
+        verbose_name_plural = "Horarios de canal de atención"
+
+
+class ImageAttentionChannel(models.Model):
+    #attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=profileFilePath)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+ 
+
 class AttentionChannel(models.Model):
-    profile = ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
+    schedules = models.ManyToManyField(ScheduleAttentionChannel)
+    images = models.ManyToManyField(ImageAttentionChannel)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -125,15 +146,6 @@ class AttentionChannel(models.Model):
     class Meta:
         abstract = True
 
-class ScheduleAttentionChannel(models.Model):
-    # 0- None, 1-Monday, 5-Monday and Wendesday
-    attention_channel = ForeignKey(AttentionChannel, on_delete=models.CASCADE)
-    bitDays = models.IntegerField()
-    duration = models.DurationField() #TODO CHECK
-    
-    class Meta:
-        verbose_name = "Horario de canal de atención"
-        verbose_name_plural = "Horarios de canal de atención"
 
 
 class Office(AttentionChannel):
@@ -145,13 +157,7 @@ class Office(AttentionChannel):
         verbose_name_plural = "Consultorios"
 
 
-class ImageAttentionChannel(models.Model):
-    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=profileFilePath)
-
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-    
+   
 
 
 class Chat(AttentionChannel):
@@ -189,7 +195,7 @@ class ProfilePatologyOrCategory(models.Model):
 class RequestOrderMedicDate(models.Model):
     name_pacient = models.TextField()
     age_pacient = models.IntegerField()
-    patology_pacient = models.ForeignKey(Patology, on_delete=models.SET_NULL)
+    patology_pacient = models.ForeignKey(Patology, on_delete=models.SET_NULL,null=True)
     adicional_description_pacient = models.TextField()
     email_pacient = models.TextField()
     phone = models.TextField()

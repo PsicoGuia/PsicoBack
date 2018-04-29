@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from address.models import AddressField
 from address.forms import AddressWidget
 
-from models import Profile, Studies
+from .models import Profile, Studies
 
 '''
 @admin.register(Profile)
