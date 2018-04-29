@@ -1,4 +1,9 @@
 from django.contrib.auth import login, authenticate
+from models import Profile, Studies
+from django.http import Http404
+from
+ address.models import Address
+from django.http import HttpResponse
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import six
 from django.utils.encoding import force_bytes, force_text
@@ -14,6 +19,24 @@ from .serializers import PersonSerializer
 
 
 from django.conf import settings
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email
+        })
 
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):
@@ -63,17 +86,33 @@ def signupMedic(request):
 
 def loginMedic(request):
     if request.method == 'POST':
-        email = request.POST['email']
-        password =  request.POST['password']
-        user = authenticate(username=email, password=password)
-        
-        if user.group_set.filter(name=GROUP_MEDIC).exists():
-            token, created = Token.objects.get_or_create(user=user)
-            person = Person.objects.get(username=email)
-            return JsonResponse({"token":token,
-                            "person":PersonSerializer(person).data,})
-        else:
-            return HttpResponseForbidden()
+        try:
+            email = request.POST['email']
+            password =  request.POST['password']
+            person = Person.objects.create_user(email, email, password)
+            person.first_name = name
+            person.is_active = False
+            group, created = Group.objects.get_or_create(name='new_group')
+            group.user_set.add(person)
+            person.save()
+            
+            # Send Email
+            mail_subject = 'Activate your account.'
+            message = render_to_string('acc_active_email.html', {
+                'person': person,
+                'domain': settings.DOMAIN,
+                'uid':urlsafe_base64_encode(force_bytes(person.pk)),
+                'token':account_activation_token.make_token(person),
+            })
+            to_email = email
+            email = EmailMessage(
+                        mail_subject, message, to=[to_email]
+            )
+            email.send()
+            
+            return HttpResponse('Please confirm your email address to complete the registration')        
+        catch e as Exception:
+            print(e)
     else:
         return HttpResponseForbidden()
     
