@@ -1,8 +1,7 @@
 from django.contrib.auth import login, authenticate
-from models import Profile, Studies
+from .models import Person
 from django.http import Http404
-from
- address.models import Address
+from address.models import Address
 from django.http import HttpResponse
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils import six
@@ -111,7 +110,7 @@ def loginMedic(request):
             email.send()
             
             return HttpResponse('Please confirm your email address to complete the registration')        
-        catch e as Exception:
+        except e as Exception:
             print(e)
     else:
         return HttpResponseForbidden()

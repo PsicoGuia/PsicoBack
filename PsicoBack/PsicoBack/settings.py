@@ -17,16 +17,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '$-(wq@+&f@x3!(7i+q6ay_gvl#)rvx!4q2t+*vtvj!2h^+llvs'
+SECRET_KEY = 'ferbi)&sk&4g7iarjpg)#w$1eq=y%92i@8(@_eur^x3m+07go$'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,6 +35,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
+
+    'django_filters',
+    'djmoney',
+    #'geoposition',
+    'address',
+    'widget_tweaks',
+
+    'medic',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +61,7 @@ ROOT_URLCONF = 'PsicoBack.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        #'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -113,8 +121,28 @@ USE_L10N = True
 
 USE_TZ = True
 
+#LOGIN_REDIRECT_URL = '/medic'
+
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
+# https://docs.djangoproject.com/en/1.10/howto/static-files/
+
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+     os.path.join(BASE_DIR, "static"),
+]
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'files')
+MEDIA_URL = '/files/'
+
+GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
+GOOGLE_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
+GOOGLE_MAPS_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
+GOOGLE_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
+
+# #TODO
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'piscoguiaprueba@gmail.com'
+EMAIL_HOST_PASSWORD = 'Abcd!234'
+EMAIL_PORT = 587
