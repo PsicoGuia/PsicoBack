@@ -37,6 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
 
+    'rest_framework',
+    'rest_framework_gis',
+    'rest_framework.authtoken',
+    'rest_auth',
+
     'django_filters',
     'djmoney',
     #'geoposition',

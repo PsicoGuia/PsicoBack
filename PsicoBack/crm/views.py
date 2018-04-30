@@ -13,9 +13,14 @@ from django.http import Http404, HttpResponse, JsonResponse, HttpResponseForbidd
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
+from rest_framework import generics
+from rest_framework import permissions
+from rest_framework import authentication
+from rest_framework import status
+from rest_framework import filters
 
 from .models import GROUP_MEDIC, Person
-from .serializers import PersonSerializer
+from .serializers import PersonSerializer,PersonDetailSerializer
 
 
 from django.conf import settings
@@ -117,4 +122,15 @@ def loginMedic(request):
         return HttpResponseForbidden()
     
 
+class PersonList(generics.ListAPIView):
+    queryset = Person.objects.all()
+    serializer_class = PersonSerializer
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated,)
 
+
+class PersonDetail(generics.RetrieveUpdateAPIView):
+    queryset = Person.objects.all()
+    serializer_class = PersonDetailSerializer
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated,)
