@@ -9,12 +9,13 @@ from .models import requestPQR
 from .serializers import requestPQRSerializer, requestPQRDetailSerializer
 # Create your views here.
 
+
 class requestPQRCreate(generics.CreateAPIView):
     queryset = requestPQR.objects.all()
     serializer_class = requestPQRSerializer
     # Public endPoint
-    #authentication_classes = (authentication.TokenAuthentication,)
-    #permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated,)
 
 
 class requestPQRList(generics.ListAPIView):

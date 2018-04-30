@@ -7,6 +7,7 @@ class requestPQRSerializer(serializers.ModelSerializer):
         model = requestPQR
         fields = '__all__'
 
+
 class requestPQRDetailSerializer(requestPQRSerializer):
     class Meta:
         model = requestPQR

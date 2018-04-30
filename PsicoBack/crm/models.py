@@ -6,9 +6,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 '''
-At the time no additional user information has been used, but I know that I will be doing it
+At the time no additional user information has been used,
+but I know that I will be doing it
 '''
-GROUP_MEDIC ="MEDICS"
+GROUP_MEDIC = "MEDICS"
+
+
 class Person(models.Model):
     user = models.OneToOneField(
         User,
