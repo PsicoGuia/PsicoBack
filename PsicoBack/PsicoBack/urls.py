@@ -19,11 +19,9 @@ from django.urls import path, include
 API_VERSION = '1.0'
 
 urlpatterns = [
-    # path(r'medic/', include('medic.urls')),
-    # path(r'crm/', include('crm.urls')),
     path('admin/', admin.site.urls),
 
     path(r'api/'+API_VERSION+'/pqr/', include('pqr.urls')),
     path(r'api/'+API_VERSION+'/crm/', include('crm.urls')),
-    
+    path(r'api/'+API_VERSION+'/medic/', include('medic.urls')),
 ]
