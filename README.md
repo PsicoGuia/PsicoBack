@@ -32,3 +32,10 @@ https://docs.djangoproject.com/en/2.0/ref/contrib/gis/install/#postgisasb
 https://trac.osgeo.org/osgeo4w/
 
 
+
+# Docker build
+cd ~/gitKraken/PsicoBack && git pull  &&
+sudo docker build -t psicoback/dev . &&
+sudo docker stop PsicoBack-dev &&
+sudo docker rm PsicoBack-dev &&
+sudo docker run --name PsicoBack-dev -d -p 8000:8000 -e "DJANGO_SETTINGS_MODULE=PsicoBack.development_docker" psicoback/dev 
