@@ -1,0 +1,17 @@
+Django==2.0.4
+git+https://github.com/furious-luke/django-address.git
+gunicorn==19.7.1
+django-filter==1.1.0
+django-filters==0.2.1
+django-geoposition==0.3.0
+django-money==0.13.2
+django-rest-auth==0.9.3
+django-widget-tweaks==1.4.2
+djangorestframework==3.8.2
+djangorestframework-gis==0.13
+pep8==1.7.1
+Pillow==5.1.0
+psycopg2==2.7.4
+psycopg2-binary==2.7.4
+py-moneyed==0.7.0
+pytz==2018.4
