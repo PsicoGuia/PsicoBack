@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from djmoney.models.fields import MoneyField
 # from geoposition.fields import GeopositionField
 from address.models import AddressField
-
+from crm.models import Person
 from django.contrib.gis.db.models import PointField
 
 
@@ -20,7 +19,7 @@ def attentionChannelFilePath(instance, filename):
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
     picture = models.ImageField(
         upload_to=profileFilePath, default='/static/images/no_user.png')
     MALE = 'M'
@@ -57,7 +56,7 @@ class Profile(models.Model):
     professionalCardNumber = models.CharField(max_length=25, null=True)
     professionalCardFile = models.ImageField(
         upload_to=profileFilePath, null=True)
-
+    # see https://github.com/coderholic/django-cities
     city = models.CharField(max_length=25, null=True)
     address = AddressField(blank=True, null=True, on_delete=models.CASCADE)
     position = PointField(geography=False, null=True,

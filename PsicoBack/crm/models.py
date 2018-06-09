@@ -13,6 +13,7 @@ GROUP_MEDIC = "MEDICS"
 
 
 class Person(models.Model):
+    # https://simpleisbetterthancomplex.com/tutorial/2016/07/22/how-to-extend-django-user-model.html#abstractuser
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -21,6 +22,9 @@ class Person(models.Model):
         null=True,
     )
     phone = models.TextField(null=True, blank=True)
+    term = models.FloatField(null=True, blank=True)
+    term_abausdata = models.FloatField(null=True, blank=True)
+    notification = models.BooleanField(default=True, blank=True)
 
     class Meta:
         verbose_name = "Persona"

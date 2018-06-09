@@ -4,6 +4,8 @@ from . import views
 
 urlpatterns = [
     url(r'^signupmedic/$', views.signupMedic, name='signupmedic'),
+    url(r'^loginmedic/$', views.loginMedic, name='loginmedic'),
+
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, name='logout'),
 
@@ -11,4 +13,6 @@ urlpatterns = [
         name="person-list"),
     url(r'^person/(?P<pk>[0-9]+)/$', views.PersonDetail.as_view(),
         name='person-detail'),
+    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.activate, name='activate'),
 ]

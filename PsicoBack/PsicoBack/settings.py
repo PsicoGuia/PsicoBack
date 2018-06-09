@@ -134,7 +134,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-
+DOMAIN = "https://www.psicogia.co"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
      os.path.join(BASE_DIR, "static"),
@@ -150,6 +150,6 @@ GOOGLE_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
 # #TODO
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'piscoguiaprueba@gmail.com'
+EMAIL_HOST_USER = 'psicoguiaprueba@gmail.com'
 EMAIL_HOST_PASSWORD = 'Abcd!234'
 EMAIL_PORT = 587

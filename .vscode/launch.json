@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "Python",
             "type": "python",
@@ -96,12 +97,14 @@
             "name": "Django",
             "type": "python",
             "request": "launch",
-            "stopOnEntry": true,
+            "stopOnEntry": false,
             "pythonPath": "${config:python.pythonPath}",
-            "program": "${workspaceRoot}/manage.py",
+            "program": "${workspaceRoot}/PsicoBack/manage.py",
             "cwd": "${workspaceRoot}",
             "args": [
                 "runserver",
+                "0:9001",
+                "--settings=PsicoBack.development",
                 "--noreload",
                 "--nothreading"
             ],
