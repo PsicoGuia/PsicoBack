@@ -11,11 +11,11 @@ from django.contrib.gis.db.models import PointField
 
 
 def profileFilePath(instance, filename):
-    return 'medic/files/profiles/{0}/{1}'.format(instance.user.id, filename)
+    return 'medic/files/profiles/{0}/{1}'.format(instance.id, filename)
 
 
 def attentionChannelFilePath(instance, filename):
-    return 'medic/files/attentionchanels/{0}/{1}'.format(instance.user.id, filename)
+    return 'medic/files/attentionchanels/{0}/{1}'.format(instance.id, filename)
 
 
 class Profile(models.Model):
@@ -50,14 +50,14 @@ class Profile(models.Model):
         default=CEDULA_CIUDADANIA,
     )
     personalDocumentNumber = models.BigIntegerField(
-        'Numero de documento', null=True)
+        'Numero de documento', blank=True, null=True)
     personalDocumentFile = models.ImageField(
-        upload_to=profileFilePath, null=True)
-    professionalCardNumber = models.CharField(max_length=25, null=True)
+        upload_to=profileFilePath, blank=True, null=True)
+    professionalCardNumber = models.CharField(max_length=25,blank=True,  null=True)
     professionalCardFile = models.ImageField(
-        upload_to=profileFilePath, null=True)
+        upload_to=profileFilePath,blank=True,  null=True)
     # see https://github.com/coderholic/django-cities
-    city = models.CharField(max_length=25, null=True)
+    city = models.CharField(max_length=25,blank=True,  null=True)
     address = AddressField(blank=True, null=True, on_delete=models.CASCADE)
     position = PointField(geography=False, null=True,
                           blank=True, default='POINT(0.0 0.0)')
@@ -74,6 +74,9 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return self.user.get_username()
+
+    def __str__(self):
+        return "%s - %s " % (self.pk, str(self.person))
 
 
 '''

@@ -140,7 +140,7 @@ STATICFILES_DIRS = [
      os.path.join(BASE_DIR, "static"),
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'files')
-MEDIA_URL = '/files/'
+MEDIA_URL = '/static/files/'
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
 GOOGLE_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
