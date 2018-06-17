@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
     'django_filters',
     'djmoney',
-    #'geoposition',
+    # 'geoposition',
     'address',
     'widget_tweaks',
 
@@ -65,10 +65,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'PsicoBack.urls'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        #'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -137,7 +143,7 @@ USE_TZ = True
 DOMAIN = "https://www.psicogia.co"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-     os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'files')
 MEDIA_URL = '/static/files/'

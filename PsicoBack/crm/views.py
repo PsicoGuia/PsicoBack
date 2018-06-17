@@ -59,6 +59,7 @@ account_activation_token = TokenGenerator()
 
 @api_view(['POST'])
 def signupMedic(request):
+    JSONResponse = {}
     if request.method == 'POST':
         # try:
         print(request.POST)
@@ -97,9 +98,15 @@ def signupMedic(request):
             mail_subject, message, to=[to_email]
         )
         email.send()
-
-        return HttpResponse('Please confirm your email\
-         address to complete the registration')
+        JSONResponse = {
+            'person': PersonDetailSerializer(person).data,
+            'domain': settings.DOMAIN,
+            'uid': urlsafe_base64_encode(force_bytes(person.user.pk)).decode(),
+            'token': account_activation_token.make_token(person.user),
+            'msg': 'Please confirm your email\
+         address to complete the registration',
+        }
+        return Response(JSONResponse)
     # catch e as Exception:
     #    print(e)
     else:
