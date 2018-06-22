@@ -73,7 +73,7 @@ class Profile(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.user.get_username()
+        return self.person.user.get_username()
 
     def __str__(self):
         return "%s - %s " % (self.pk, str(self.person))
@@ -91,7 +91,7 @@ def update_user_profile(sender, instance, created, **kwargs):
 
 
 def studiesFilePath(instance, filename):
-    return 'medic/files/{0}/{1}'.format(instance.profile.user.id, filename)
+    return 'medic/files/{0}/{1}'.format(instance.profile.person.id, filename)
 
 
 class Studies(models.Model):
@@ -126,11 +126,13 @@ class Studies(models.Model):
         return dict(self.DEGREE)[self.level]
 
     def getUserName(self):
-        return self.profile.user.get_username()
+        return self.profile.person.user.get_username()
 
     def __unicode__(self):
         return '%s - %s: %s' % (self.getUserName(), self.getLevel(), self.title)
 
+    def __str__(self):
+        return '%s - %s: %s' % (self.getUserName(), self.getLevel(), self.title)
 
 class ScheduleAttentionChannel(models.Model):
     # 0- None, 1-Monday, 5-Monday and Wendesday

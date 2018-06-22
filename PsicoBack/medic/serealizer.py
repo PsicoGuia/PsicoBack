@@ -2,9 +2,22 @@ from rest_framework import serializers
 from .models import Profile, Studies, Office, Chat,\
     CategoryPatology, Patology, ProfilePatologyOrCategory,\
     RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel
+from crm.serializers import PersonDetailSerializer
+from address.models import Address
+
+
+class AdressSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Address
+        fields = '__all__'
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    person = PersonDetailSerializer(read_only=True)
+    address = AdressSerializer(read_only=True)
+    # TODO studies = http://www.django-rest-framework.org/api-guide/serializers/
+
     class Meta:
         model = Profile
         fields = '__all__'
