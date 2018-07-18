@@ -134,15 +134,21 @@ class Studies(models.Model):
     def __str__(self):
         return '%s - %s: %s' % (self.getUserName(), self.getLevel(), self.title)
 
+
 class ScheduleAttentionChannel(models.Model):
     # 0- None, 1-Monday, 5-Monday and Wendesday
     # attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
     bitDays = models.IntegerField()
-    duration = models.DurationField()  # TODO CHECK
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    # duration = models.DurationField()  # not aplicable
 
     class Meta:
         verbose_name = "Horario de canal de atención"
         verbose_name_plural = "Horarios de canal de atención"
+    
+    def __str__(self):
+        return '%s - %s: %s' % (self.bitDays, self.start_date, self.end_date)
 
 
 class ImageAttentionChannel(models.Model):
@@ -152,6 +158,9 @@ class ImageAttentionChannel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return '%s: %s' % (self.pk, self.image)
+
 
 class AttentionChannel(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -159,28 +168,39 @@ class AttentionChannel(models.Model):
     schedules = models.ManyToManyField(ScheduleAttentionChannel)
     images = models.ManyToManyField(ImageAttentionChannel)
 
+    position = PointField(geography=False, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    city = models.TextField(null=True, blank=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return '%s: %s' % (self.pk, self.description)
+
 
 class Office(AttentionChannel):
-    description = models.TextField(null=True, blank=True)
-    position = PointField(geography=False, null=True, blank=True)
-
+    
     class Meta:
         verbose_name = "Consultorio"
         verbose_name_plural = "Consultorios"
 
 
 class Chat(AttentionChannel):
-    description = models.TextField(null=True, blank=True)
 
     class Meta:
-        verbose_name = "Consultorio"
-        verbose_name_plural = "Consultorios"
+        verbose_name = "Chat"
+        verbose_name_plural = "Chats"
+
+
+class HomeVisit(AttentionChannel):
+
+    class Meta:
+        verbose_name = "Servicio a Domicilio"
+        verbose_name_plural = "Servicios a Domicilio"
 
 
 class CategoryPatology(models.Model):

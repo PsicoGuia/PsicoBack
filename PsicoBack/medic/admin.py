@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from address.models import AddressField
 from address.forms import AddressWidget
 
-from .models import Profile, Studies, Office, Chat,\
+from .models import Profile, Studies, Office, Chat, HomeVisit,\
     CategoryPatology, Patology, ProfilePatologyOrCategory,\
     RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel
 
@@ -62,6 +62,7 @@ admin.site.register(ScheduleAttentionChannel)
 admin.site.register(ImageAttentionChannel)
 admin.site.register(Office)
 admin.site.register(Chat)
+admin.site.register(HomeVisit)
 admin.site.register(CategoryPatology)
 admin.site.register(Patology)
 admin.site.register(ProfilePatologyOrCategory)
