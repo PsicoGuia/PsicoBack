@@ -79,6 +79,9 @@ class ProfileListView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 
+    def get_queryset(self):
+        """Returns Polls that belong to the current user"""
+        return Profile.objects.filter(person__user=self.request.user)
 
 class StudiesListView(generics.ListCreateAPIView):
     queryset = Studies.objects.all()

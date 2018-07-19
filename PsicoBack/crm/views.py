@@ -1,5 +1,4 @@
 from django.contrib.auth import login, authenticate
-from .models import Person
 from django.http import Http404
 from address.models import Address
 from django.http import HttpResponse
@@ -21,8 +20,9 @@ from rest_framework import status
 from rest_framework import filters
 
 from .models import GROUP_MEDIC, Person
+from django.contrib.auth.models import User
 from .serializers import PersonSerializer, PersonDetailSerializer
-
+from medic.models import Profile
 
 from django.conf import settings
 
@@ -59,73 +59,84 @@ account_activation_token = TokenGenerator()
 
 @api_view(['POST'])
 def signupMedic(request):
+    JSONResponse = {}
     if request.method == 'POST':
         # try:
-        name = request.POST['name']
-        identification_number = request.POST['identification_number']
-        profesional_number = request.POST['profesional_number']
-        email = request.POST['email']
-        phone = request.POST['phone']
-        password = request.POST['password']
-        person = Person.objects.create_user(email, email, password)
-        person.first_name = name
-        person.is_active = False
-        group, created = Group.objects.get_or_create(name=GROUP_MEDIC)
-        group.user_set.add(person)
+        print(request.POST)
+        first_name = request.data.get('first_name', None)
+        last_name = request.data.get('last_name', None)
+        identification_number = request.data.get('identification_number', None)
+        profesional_number = request.data.get('profesional_number', None)
+        password = request.data.get('password', None)
+        email = request.data.get('email', None)
+        phone = request.data.get('phone', None)
+        term = request.data.get('version_terms', None)
+        terms_abusdata = request.data.get('version_terms_abeusdata', None)
+        notification = request.data.get('notification', None)
+        user = User.objects.create_user(email, email, password)
+        user.is_active = False
+        user.save()
+        person = Person(user=user, phone=phone, term=term,
+                        term_abausdata=terms_abusdata, notification=notification)
         person.save()
+        group, created = Group.objects.get_or_create(name=GROUP_MEDIC)
+        group.user_set.add(person.user)
+        prof = Profile(
+            person=person, personalDocumentNumber=identification_number)
+        prof.save()
 
         # Send Email
         mail_subject = 'Activate your account.'
-        message = render_to_string('acc_active_email.html', {
+        message = render_to_string('email_confirm_account.html', {
             'person': person,
             'domain': settings.DOMAIN,
-            'uid': urlsafe_base64_encode(force_bytes(person.pk)),
-            'token': account_activation_token.make_token(person),
+            'uid': urlsafe_base64_encode(force_bytes(person.user.pk)).decode(),
+            'token': account_activation_token.make_token(person.user),
         })
         to_email = email
         email = EmailMessage(
             mail_subject, message, to=[to_email]
         )
         email.send()
-
-        return HttpResponse('Please confirm your email\
-         address to complete the registration')
+        JSONResponse = {
+            'person': PersonDetailSerializer(person).data,
+            'domain': settings.DOMAIN,
+            'uid': urlsafe_base64_encode(force_bytes(person.user.pk)).decode(),
+            'token': account_activation_token.make_token(person.user),
+            'msg': 'Please confirm your email\
+         address to complete the registration',
+        }
+        return Response(JSONResponse)
     # catch e as Exception:
     #    print(e)
     else:
         return HttpResponseForbidden()
 
-
+@api_view(['POST'])
 def loginMedic(request):
     if request.method == 'POST':
         try:
-            email = request.POST['email']
-            password = request.POST['password']
-            person = Person.objects.create_user(email, email, password)
-            person.first_name = name
-            person.is_active = False
-            group, created = Group.objects.get_or_create(name='new_group')
-            group.user_set.add(person)
-            person.save()
-
-            # Send Email
-            mail_subject = 'Activate your account.'
-            message = render_to_string('acc_active_email.html', {
-                'person': person,
-                'domain': settings.DOMAIN,
-                'uid': urlsafe_base64_encode(force_bytes(person.pk)),
-                'token': account_activation_token.make_token(person),
-            })
-            to_email = email
-            email = EmailMessage(
-                mail_subject, message, to=[to_email]
-            )
-            email.send()
-
-            return HttpResponse('Please confirm your email address \
-            to complete the registration')
-        except e as Exception:
-            print(e)
+            JSONResponse ={}
+            email = request.data['email']
+            password = request.data['password']
+            user = User.objects.filter(email=email).first()
+            if not user:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+            authorizated = user.check_password(password)
+        
+            if not authorizated:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+            if (not user.groups.filter(name=GROUP_MEDIC).exists()):
+                Response(status=status.HTTP_401_UNAUTHORIZED)    
+            
+            token, created = Token.objects.get_or_create(user=user)
+            JSONResponse['key'] = token.key
+            JSONResponse['person'] = PersonDetailSerializer(Person.objects.filter(user=user).first()).data
+            return Response(JSONResponse)
+            
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
     else:
         return HttpResponseForbidden()
 
@@ -142,3 +153,19 @@ class PersonDetail(generics.RetrieveUpdateAPIView):
     serializer_class = PersonDetailSerializer
     # authentication_classes = (authentication.TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticated,)
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        # return redirect('home')
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')

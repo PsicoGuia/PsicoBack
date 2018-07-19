@@ -39,3 +39,14 @@ sudo docker build -t psicoback/dev . &&
 sudo docker stop PsicoBack-dev &&
 sudo docker rm PsicoBack-dev &&
 sudo docker run --name PsicoBack-dev -d -p 8000:8000 -e "DJANGO_SETTINGS_MODULE=PsicoBack.development_docker" psicoback/dev 
+
+
+# Normal run ubuntu
+## install
+python3 -m venv env
+source env/bin/activate
+pip3 install -r PsicoBack/requriments.txt
+
+## run
+source env/bin/activate
+python3 PsicoBack/manage.py runserver 0:8000 --settings=PsicoBack.development

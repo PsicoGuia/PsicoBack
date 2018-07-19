@@ -1,26 +1,25 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from djmoney.models.fields import MoneyField
 # from geoposition.fields import GeopositionField
 from address.models import AddressField
-
+from crm.models import Person
 from django.contrib.gis.db.models import PointField
 
 
 def profileFilePath(instance, filename):
-    return 'medic/files/profiles/{0}/{1}'.format(instance.user.id, filename)
+    return 'medic/files/profiles/{0}/{1}'.format(instance.id, filename)
 
 
 def attentionChannelFilePath(instance, filename):
-    return 'medic/files/attentionchanels/{0}/{1}'.format(instance.user.id, filename)
+    return 'medic/files/attentionchanels/{0}/{1}'.format(instance.id, filename)
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
     picture = models.ImageField(
         upload_to=profileFilePath, default='/static/images/no_user.png')
     MALE = 'M'
@@ -51,14 +50,14 @@ class Profile(models.Model):
         default=CEDULA_CIUDADANIA,
     )
     personalDocumentNumber = models.BigIntegerField(
-        'Numero de documento', null=True)
+        'Numero de documento', blank=True, null=True)
     personalDocumentFile = models.ImageField(
-        upload_to=profileFilePath, null=True)
-    professionalCardNumber = models.CharField(max_length=25, null=True)
+        upload_to=profileFilePath, blank=True, null=True)
+    professionalCardNumber = models.CharField(max_length=25,blank=True,  null=True)
     professionalCardFile = models.ImageField(
-        upload_to=profileFilePath, null=True)
-
-    city = models.CharField(max_length=25, null=True)
+        upload_to=profileFilePath,blank=True,  null=True)
+    # see https://github.com/coderholic/django-cities
+    city = models.CharField(max_length=25,blank=True,  null=True)
     address = AddressField(blank=True, null=True, on_delete=models.CASCADE)
     position = PointField(geography=False, null=True,
                           blank=True, default='POINT(0.0 0.0)')
@@ -74,7 +73,10 @@ class Profile(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return self.user.get_username()
+        return self.person.user.get_username()
+
+    def __str__(self):
+        return "%s - %s " % (self.pk, str(self.person))
 
 
 '''
@@ -89,7 +91,7 @@ def update_user_profile(sender, instance, created, **kwargs):
 
 
 def studiesFilePath(instance, filename):
-    return 'medic/files/{0}/{1}'.format(instance.profile.user.id, filename)
+    return 'medic/files/{0}/{1}'.format(instance.profile.person.id, filename)
 
 
 class Studies(models.Model):
@@ -124,9 +126,12 @@ class Studies(models.Model):
         return dict(self.DEGREE)[self.level]
 
     def getUserName(self):
-        return self.profile.user.get_username()
+        return self.profile.person.user.get_username()
 
     def __unicode__(self):
+        return '%s - %s: %s' % (self.getUserName(), self.getLevel(), self.title)
+
+    def __str__(self):
         return '%s - %s: %s' % (self.getUserName(), self.getLevel(), self.title)
 
 
@@ -134,11 +139,16 @@ class ScheduleAttentionChannel(models.Model):
     # 0- None, 1-Monday, 5-Monday and Wendesday
     # attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
     bitDays = models.IntegerField()
-    duration = models.DurationField()  # TODO CHECK
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    # duration = models.DurationField()  # not aplicable
 
     class Meta:
         verbose_name = "Horario de canal de atención"
         verbose_name_plural = "Horarios de canal de atención"
+    
+    def __str__(self):
+        return '%s - %s: %s' % (self.bitDays, self.start_date, self.end_date)
 
 
 class ImageAttentionChannel(models.Model):
@@ -148,6 +158,9 @@ class ImageAttentionChannel(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return '%s: %s' % (self.pk, self.image)
+
 
 class AttentionChannel(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
@@ -155,28 +168,39 @@ class AttentionChannel(models.Model):
     schedules = models.ManyToManyField(ScheduleAttentionChannel)
     images = models.ManyToManyField(ImageAttentionChannel)
 
+    position = PointField(geography=False, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    city = models.TextField(null=True, blank=True)
+
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return '%s: %s' % (self.pk, self.description)
+
 
 class Office(AttentionChannel):
-    description = models.TextField(null=True, blank=True)
-    position = PointField(geography=False, null=True, blank=True)
-
+    
     class Meta:
         verbose_name = "Consultorio"
         verbose_name_plural = "Consultorios"
 
 
 class Chat(AttentionChannel):
-    description = models.TextField(null=True, blank=True)
 
     class Meta:
-        verbose_name = "Consultorio"
-        verbose_name_plural = "Consultorios"
+        verbose_name = "Chat"
+        verbose_name_plural = "Chats"
+
+
+class HomeVisit(AttentionChannel):
+
+    class Meta:
+        verbose_name = "Servicio a Domicilio"
+        verbose_name_plural = "Servicios a Domicilio"
 
 
 class CategoryPatology(models.Model):

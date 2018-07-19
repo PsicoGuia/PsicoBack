@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 
     'django_filters',
     'djmoney',
-    #'geoposition',
+    # 'geoposition',
     'address',
     'widget_tweaks',
 
@@ -65,10 +65,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'PsicoBack.urls'
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        #'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -134,13 +140,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
-
+DOMAIN = "https://www.psicogia.co"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-     os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "static"),
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'files')
-MEDIA_URL = '/files/'
+MEDIA_URL = '/static/files/'
 
 GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
 GOOGLE_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
@@ -150,6 +156,6 @@ GOOGLE_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
 # #TODO
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'piscoguiaprueba@gmail.com'
+EMAIL_HOST_USER = 'psicoguiaprueba@gmail.com'
 EMAIL_HOST_PASSWORD = 'Abcd!234'
 EMAIL_PORT = 587

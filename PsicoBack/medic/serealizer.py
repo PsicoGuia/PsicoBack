@@ -1,12 +1,16 @@
 from rest_framework import serializers
-from .models import Profile, Studies, Office, Chat,\
+from .models import Profile, Studies, Office, Chat, HomeVisit,\
     CategoryPatology, Patology, ProfilePatologyOrCategory,\
-    RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel
+    RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel,\
+    AttentionChannel
+from crm.serializers import PersonDetailSerializer
+from address.models import Address
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class AdressSerializer(serializers.ModelSerializer):
+
     class Meta:
-        model = Profile
+        model = Address
         fields = '__all__'
 
 
@@ -14,19 +18,6 @@ class StudiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Studies
         fields = '__all__'
-
-
-class OfficeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Office
-        fields = '__all__'
-
-
-class ChatSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Chat
-        fields = '__all__'
-
 
 class CategoryPatologySerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,4 +52,45 @@ class ScheduleAttentionChannelSerializer(serializers.ModelSerializer):
 class ImageAttentionChannelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageAttentionChannel
+        fields = '__all__'
+
+
+class AttentionChannelSerializer(serializers.ModelSerializer):
+    images = ImageAttentionChannelSerializer(many=True, read_only=True)
+    schedules = ScheduleAttentionChannelSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = AttentionChannel
+        fields = '__all__'
+
+
+class OfficeSerializer(AttentionChannelSerializer):
+    class Meta:
+        model = Office
+        fields = '__all__'
+
+
+class ChatSerializer(AttentionChannelSerializer):
+    class Meta:
+        model = Chat
+        fields = '__all__'
+
+
+class HomeVisitSerializer(AttentionChannelSerializer):
+    class Meta:
+        model = HomeVisit
+        fields = '__all__'        
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    person = PersonDetailSerializer(read_only=True)
+    address = AdressSerializer(read_only=True)
+    studies_set = StudiesSerializer(many=True, read_only=True)
+    homevisit_set = HomeVisitSerializer(many=True, read_only=True)
+    office_set = OfficeSerializer(many=True, read_only=True)
+    chat_set = ChatSerializer(many=True, read_only=True)
+    profilepatologyorcategory_set = CategoryPatologySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Profile
         fields = '__all__'
