@@ -128,8 +128,8 @@ class ChatDetailView(generics.RetrieveUpdateDestroyAPIView):
 class CategoryPatologyListView(generics.ListCreateAPIView):
     queryset = CategoryPatology.objects.all()
     serializer_class = CategoryPatologySerializer
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (IsAuthenticated,)
+    # authentication_classes = (authentication.TokenAuthentication,)
 
 
 class CategoryPatologyDetailView(generics.RetrieveUpdateDestroyAPIView):

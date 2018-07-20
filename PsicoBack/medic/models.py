@@ -204,12 +204,15 @@ class HomeVisit(AttentionChannel):
 
 
 class CategoryPatology(models.Model):
-    name = models.TextField(null=False, blank=False)
+    name = models.TextField(null=False, blank=False, unique=True)
     # categoryFather = models.ForeignKey(CategoryPatology, on_delete=models.CASCADE, null=True, blank=True)  #DEPRECATED
 
     class Meta:
         verbose_name = "Categoria de Patologías"
         verbose_name_plural = "Categorias de Patologías"
+
+    def __str__(self):
+        return '%s: %s' % (self.pk, self.name)
 
 
 class Patology(models.Model):
