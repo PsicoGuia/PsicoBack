@@ -62,7 +62,7 @@ def signupMedic(request):
     JSONResponse = {}
     if request.method == 'POST':
         # try:
-        print(request.POST)
+        # print(request.POST)
         first_name = request.data.get('first_name', None)
         last_name = request.data.get('last_name', None)
         identification_number = request.data.get('identification_number', None)
