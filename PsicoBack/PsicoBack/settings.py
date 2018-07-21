@@ -159,7 +159,8 @@ GOOGLE_API_KEY = 'AIzaSyCQccce99Xzt23VYwc4GShNc2QC6Zq3dOI'
 
 # #TODO
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'psicoguiaprueba@gmail.com'
-EMAIL_HOST_PASSWORD = 'Abcd!234'
+EMAIL_HOST = 'smtp-relay.gmail.com'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'admin@psicoguia.co'
 EMAIL_PORT = 587
