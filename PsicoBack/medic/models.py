@@ -20,6 +20,8 @@ def attentionChannelFilePath(instance, filename):
 
 class Profile(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    profile_title = models.TextField()
+    about_me = models.TextField(null=True,blank=True)
     picture = models.ImageField(
         upload_to=profileFilePath, default='/static/images/no_user.png')
     MALE = 'M'
@@ -58,9 +60,10 @@ class Profile(models.Model):
         upload_to=profileFilePath,blank=True,  null=True)
     # see https://github.com/coderholic/django-cities
     city = models.CharField(max_length=25,blank=True,  null=True)
-    address = AddressField(blank=True, null=True, on_delete=models.CASCADE)
+    # address = AddressField(blank=True, null=True, on_delete=models.CASCADE)
     position = PointField(geography=False, null=True,
                           blank=True, default='POINT(0.0 0.0)')
+    address_full = models.TextField(null=True,blank=True)
 
     cost = MoneyField(
         decimal_places=2,
@@ -219,6 +222,7 @@ class Patology(models.Model):
     name = models.TextField(null=False, blank=False)
     category = models.ForeignKey(
         CategoryPatology, on_delete=models.CASCADE, null=False, blank=False)
+    extra_info = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Patología"
