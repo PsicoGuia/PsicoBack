@@ -73,7 +73,7 @@ class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = (authentication.TokenAuthentication,)
 
 
-class ProfileListView(generics.ListCreateAPIView):
+class ProfileMyListView(generics.ListCreateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = (IsAuthenticated,)
@@ -83,6 +83,11 @@ class ProfileListView(generics.ListCreateAPIView):
         """Returns Polls that belong to the current user"""
         return Profile.objects.filter(person__user=self.request.user)
 
+class ProfileListView(generics.ListCreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    
+    
 class StudiesListView(generics.ListCreateAPIView):
     queryset = Studies.objects.all()
     serializer_class = StudiesSerializer

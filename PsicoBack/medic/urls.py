@@ -22,6 +22,8 @@ API_VERSION = '1.0'
 urlpatterns = [
     path(r'profile/', views.ProfileListView.as_view(),
          name="profile-list"),
+    path(r'profile/my-profile/', views.ProfileMyListView.as_view(),
+         name="profile-list"),     
     path(r'profile/<int:pk>/', views.ProfileDetailView.as_view(),
          name='profile-detail'),
     path(r'studies/', views.StudiesListView.as_view(),

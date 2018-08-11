@@ -31,12 +31,6 @@ class PatologySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProfilePatologyOrCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProfilePatologyOrCategory
-        fields = '__all__'
-
-
 class RequestOrderMedicDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = RequestOrderMedicDate
@@ -82,6 +76,15 @@ class HomeVisitSerializer(AttentionChannelSerializer):
         fields = '__all__'        
 
 
+class ProfilePatologyOrCategorySerializer(serializers.ModelSerializer):
+    patology = PatologySerializer(read_only=True)
+    category = CategoryPatologySerializer(read_only=True)
+    
+    class Meta:
+        model = ProfilePatologyOrCategory
+        fields = '__all__'
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     person = PersonDetailSerializer(read_only=True)
     address = AdressSerializer(read_only=True)
@@ -89,7 +92,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     homevisit_set = HomeVisitSerializer(many=True, read_only=True)
     office_set = OfficeSerializer(many=True, read_only=True)
     chat_set = ChatSerializer(many=True, read_only=True)
-    profilepatologyorcategory_set = CategoryPatologySerializer(many=True, read_only=True)
+    profilepatologyorcategory_set = ProfilePatologyOrCategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Profile
