@@ -21,7 +21,7 @@ from .serealizer import ProfileSerializer, StudiesSerializer, \
     OfficeSerializer, ChatSerializer, CategoryPatologySerializer, \
     PatologySerializer, ProfilePatologyOrCategorySerializer, \
     RequestOrderMedicDateSerializer, ScheduleAttentionChannelSerializer, \
-    ImageAttentionChannelSerializer
+    ImageAttentionChannelSerializer, ProfileLiteSerializer
 
 # Create your views here.
 
@@ -69,8 +69,13 @@ def profile(request, username):
 class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = (IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
+
+    def patch(self, request, *args, **kwargs):
+        self.serializer_class = ProfileLiteSerializer
+        self.queryset = Profile.objects.filter(person__user=request.user)
+        self.permission_classes = (permissions.IsAuthenticated,)
+        return self.partial_update(request, *args, **kwargs)
 
 
 class ProfileMyListView(generics.ListCreateAPIView):
@@ -83,11 +88,12 @@ class ProfileMyListView(generics.ListCreateAPIView):
         """Returns Polls that belong to the current user"""
         return Profile.objects.filter(person__user=self.request.user)
 
+
 class ProfileListView(generics.ListCreateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    
-    
+
+
 class StudiesListView(generics.ListCreateAPIView):
     queryset = Studies.objects.all()
     serializer_class = StudiesSerializer
@@ -130,7 +136,7 @@ class ChatDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = (authentication.TokenAuthentication,)
 
 
-class CategoryPatologyListView(generics.ListCreateAPIView):
+class CategoryPatologyListView(generics.ListAPIView):
     queryset = CategoryPatology.objects.all()
     serializer_class = CategoryPatologySerializer
     # permission_classes = (IsAuthenticated,)
@@ -144,11 +150,9 @@ class CategoryPatologyDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = (authentication.TokenAuthentication,)
 
 
-class PatologyListView(generics.ListCreateAPIView):
+class PatologyListView(generics.ListAPIView):
     queryset = Patology.objects.all()
     serializer_class = PatologySerializer
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
 
 
 class PatologyDetailView(generics.RetrieveUpdateDestroyAPIView):

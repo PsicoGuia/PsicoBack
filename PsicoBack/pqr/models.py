@@ -20,3 +20,14 @@ class requestPQR(models.Model):
     class Meta:
         verbose_name = "Petición PQR"
         verbose_name_plural = "Peticiones PQR"
+
+    def __str__(self):
+        return str(self.email_request_user)
+
+
+class FAQ(models.Model):
+    title = models.TextField()
+    body = models.TextField()
+
+    def __str__(self):
+        return str(self.title)
