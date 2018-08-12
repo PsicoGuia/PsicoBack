@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     url(r'^requestpqr/$', views.requestPQRList.as_view()),
-    url(r'^requestpqr-create/$', views.requestPQRCreate.as_view()),
+    url(r'^requestpqr/create/$', views.requestPQRCreate.as_view()),
     url(r'^requestpqr/(?P<pk>[0-9]+)/$', views.requestPQRDetail.as_view()),
+    url(r'^faq/$', views.FAQList.as_view()),
 ]

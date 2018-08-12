@@ -5,8 +5,8 @@ from rest_framework import authentication
 from rest_framework import status
 from rest_framework import filters
 
-from .models import requestPQR
-from .serializers import requestPQRSerializer, requestPQRDetailSerializer
+from .models import requestPQR, FAQ
+from .serializers import requestPQRSerializer, requestPQRDetailSerializer, FAQSerializer
 # Create your views here.
 
 
@@ -30,3 +30,8 @@ class requestPQRDetail(generics.RetrieveUpdateAPIView):
     serializer_class = requestPQRDetailSerializer
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
+
+
+class FAQList(generics.ListAPIView):
+    queryset = FAQ.objects.all()
+    serializer_class = FAQSerializer
