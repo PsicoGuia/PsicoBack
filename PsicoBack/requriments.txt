@@ -1,7 +1,7 @@
 Django==2.0.4
 git+https://github.com/furious-luke/django-address.git
 gunicorn==19.7.1
-django-filter==1.1.0
+django-filter==2.0.0
 django-filters==0.2.1
 django-geoposition==0.3.0
 django-money==0.13.2

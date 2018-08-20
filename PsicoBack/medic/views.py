@@ -1,12 +1,20 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.http import Http404
+from django.conf import settings
+
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.measure import D
+from django.contrib.gis.db.models.functions import Distance
 
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import authentication
 from rest_framework import status
 from rest_framework import filters
+from rest_framework import pagination
+import django_filters.rest_framework
+
 
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes
@@ -66,6 +74,11 @@ def profile(request, username):
 '''
 
 
+class StandardResultsSetPagination(pagination.PageNumberPagination):
+    page_size = 50
+    max_page_size = 1000
+
+
 class ProfileDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -89,9 +102,40 @@ class ProfileMyListView(generics.ListCreateAPIView):
         return Profile.objects.filter(person__user=self.request.user)
 
 
-class ProfileListView(generics.ListCreateAPIView):
-    queryset = Profile.objects.all()
+class ProfilesFilter(django_filters.FilterSet):
+    patology__in = django_filters.BaseInFilter(
+        field_name='profilepatologyorcategory__patology_id', distinct=True,
+        lookup_expr='in')
+   
+    class Meta:
+        model = Profile
+        # get defaults fields + custom
+        fields = [obj.attname for obj in Profile._meta.fields
+                  if obj.attname not in [
+                      'picture',
+                      'personalDocumentFile',
+                      'professionalCardFile',
+                      'position']]
+
+
+class ProfileListView(generics.ListAPIView):
     serializer_class = ProfileSerializer
+    pagination_class = StandardResultsSetPagination
+    filter_class = ProfilesFilter
+
+    def get_queryset(self):
+        # Get nearest profiles
+        lat = self.request.query_params.get("lat", None)
+        lng = self.request.query_params.get("lng", None)
+        max_distance = self.request.query_params.get(
+            "max_distance", settings.POST_GIS_MAX_DISTANCE_SEARCH)
+        if not lat or not lng:
+            return Profile.objects.all()
+        position = GEOSGeometry('POINT(%s %s)' % (lng, lat), srid=4326)
+        return Profile.objects.filter(position__distance_lte=(
+            position, D(km=max_distance)
+        )).annotate(distance=Distance('position', position)) \
+            .order_by('distance')
 
 
 class StudiesListView(generics.ListCreateAPIView):
