@@ -68,7 +68,10 @@ ROOT_URLCONF = 'PsicoBack.urls'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    )
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
 }
 
 TEMPLATES = [
@@ -164,3 +167,6 @@ EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'admin@psicoguia.co'
 EMAIL_PORT = 587
+
+# POSTGIS
+POST_GIS_MAX_DISTANCE_SEARCH = 500

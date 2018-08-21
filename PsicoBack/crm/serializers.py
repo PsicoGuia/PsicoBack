@@ -9,12 +9,19 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
+class UserLiteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["username", "email", "first_name", "last_name"]
+
+
 class UserSerializer(serializers.ModelSerializer):
     groups = GroupSerializer(required=False, read_only=True, many=True)
 
     class Meta:
         model = User
-        fields = ["username", "email", "first_name", "last_name", "groups"]
+        fields = ["username", "email", "first_name",
+                  "last_name", "groups", "id"]
 
 
 class PersonSerializer(serializers.ModelSerializer):

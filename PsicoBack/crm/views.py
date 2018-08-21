@@ -21,7 +21,7 @@ from rest_framework import filters
 
 from .models import GROUP_MEDIC, Person
 from django.contrib.auth.models import User
-from .serializers import PersonSerializer, PersonDetailSerializer
+from .serializers import PersonSerializer, PersonDetailSerializer, UserLiteSerializer, UserSerializer
 from medic.models import Profile
 
 from django.conf import settings
@@ -151,8 +151,30 @@ class PersonList(generics.ListAPIView):
 class PersonDetail(generics.RetrieveUpdateAPIView):
     queryset = Person.objects.all()
     serializer_class = PersonDetailSerializer
-    # authentication_classes = (authentication.TokenAuthentication,)
-    # permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def patch(self, request, *args, **kwargs):
+        self.serializer_class = PersonSerializer
+        self.queryset = Person.objects.filter(user=request.user)
+        self.permission_classes = (permissions.IsAuthenticated,)
+        return self.partial_update(request, *args, **kwargs)    
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.none()
+    serializer_class = PersonSerializer
+
+
+class UserDetail(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    authentication_classes = (authentication.TokenAuthentication,)
+
+    def patch(self, request, *args, **kwargs):
+        self.serializer_class = UserLiteSerializer
+        self.queryset = User.objects.filter(pk=request.user.id)
+        self.permission_classes = (permissions.IsAuthenticated,)
+        return self.partial_update(request, *args, **kwargs)    
+
 
 
 def activate(request, uidb64, token):
