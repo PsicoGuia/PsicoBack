@@ -24,12 +24,14 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Profile, Studies, Office, Chat,\
     CategoryPatology, Patology, ProfilePatologyOrCategory,\
-    RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel
+    RequestOrderMedicDate, AttentionChannel, ScheduleAttentionChannel, \
+    ImageAttentionChannel
 from .serealizer import ProfileSerializer, StudiesSerializer, \
     OfficeSerializer, ChatSerializer, CategoryPatologySerializer, \
     PatologySerializer, ProfilePatologyOrCategorySerializer, \
     RequestOrderMedicDateSerializer, ScheduleAttentionChannelSerializer, \
-    ImageAttentionChannelSerializer, ProfileLiteSerializer
+    ImageAttentionChannelSerializer, ProfileLiteSerializer, \
+    AttentionChannelSerializer
 
 # Create your views here.
 
@@ -106,7 +108,7 @@ class ProfilesFilter(django_filters.FilterSet):
     patology__in = django_filters.BaseInFilter(
         field_name='profilepatologyorcategory__patology_id', distinct=True,
         lookup_expr='in')
-   
+
     class Meta:
         model = Profile
         # get defaults fields + custom
@@ -230,6 +232,20 @@ class RequestOrderMedicDateListView(generics.ListCreateAPIView):
 class RequestOrderMedicDateDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = RequestOrderMedicDate.objects.all()
     serializer_class = RequestOrderMedicDateSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
+class AttentionChannelListView(generics.ListCreateAPIView):
+    queryset = AttentionChannel.objects.all()
+    serializer_class = AttentionChannelSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
+class AttentionChannelDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AttentionChannel.objects.all()
+    serializer_class = AttentionChannelSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 

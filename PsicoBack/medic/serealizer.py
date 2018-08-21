@@ -51,7 +51,7 @@ class ImageAttentionChannelSerializer(serializers.ModelSerializer):
 
 class AttentionChannelSerializer(serializers.ModelSerializer):
     images = ImageAttentionChannelSerializer(many=True, read_only=True)
-    schedules = ScheduleAttentionChannelSerializer(many=True, read_only=True)
+    schedules = ScheduleAttentionChannelSerializer(many=True)
     
     class Meta:
         model = AttentionChannel
