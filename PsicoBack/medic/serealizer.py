@@ -19,6 +19,7 @@ class StudiesSerializer(serializers.ModelSerializer):
         model = Studies
         fields = '__all__'
 
+
 class CategoryPatologySerializer(serializers.ModelSerializer):
     class Meta:
         model = CategoryPatology
@@ -50,9 +51,11 @@ class ImageAttentionChannelSerializer(serializers.ModelSerializer):
 
 
 class AttentionChannelSerializer(serializers.ModelSerializer):
-    images = ImageAttentionChannelSerializer(many=True, read_only=True)
-    schedules = ScheduleAttentionChannelSerializer(many=True, read_only=True)
-    
+    imageattentionchannel_set = ImageAttentionChannelSerializer(
+        many=True, read_only=True)
+    scheduleattentionchannel_set = ScheduleAttentionChannelSerializer(
+        many=True, read_only=True)
+
     class Meta:
         model = AttentionChannel
         fields = '__all__'
@@ -73,13 +76,13 @@ class ChatSerializer(AttentionChannelSerializer):
 class HomeVisitSerializer(AttentionChannelSerializer):
     class Meta:
         model = HomeVisit
-        fields = '__all__'        
+        fields = '__all__'
 
 
 class ProfilePatologyOrCategorySerializer(serializers.ModelSerializer):
     patology = PatologySerializer(read_only=True)
     category = CategoryPatologySerializer(read_only=True)
-    
+
     class Meta:
         model = ProfilePatologyOrCategory
         fields = '__all__'
@@ -88,11 +91,27 @@ class ProfilePatologyOrCategorySerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     person = PersonDetailSerializer(read_only=True)
     address = AdressSerializer(read_only=True)
+    attentionchannel_set = AttentionChannelSerializer(
+        many=True, read_only=True)
     studies_set = StudiesSerializer(many=True, read_only=True)
-    homevisit_set = HomeVisitSerializer(many=True, read_only=True)
-    office_set = OfficeSerializer(many=True, read_only=True)
-    chat_set = ChatSerializer(many=True, read_only=True)
-    profilepatologyorcategory_set = ProfilePatologyOrCategorySerializer(many=True, read_only=True)
+    # homevisit_set = HomeVisitSerializer(many=True, read_only=True)
+    # office_set = OfficeSerializer(many=True, read_only=True)
+    # chat_set = ChatSerializer(many=True, read_only=True)
+    profilepatologyorcategory_set = ProfilePatologyOrCategorySerializer(
+        many=True, read_only=True)
+
+    office_set = serializers.SerializerMethodField()
+    homevisit_set = serializers.SerializerMethodField()
+    chat_set = serializers.SerializerMethodField()
+
+    def get_office_set(self, obj):
+        return OfficeSerializer(Office.objects.filter(profile=obj), many=True).data
+
+    def get_homevisit_set(self, obj):
+        return HomeVisitSerializer(HomeVisit.objects.filter(profile=obj), many=True).data
+
+    def get_chat_set(self, obj):
+        return ChatSerializer(Chat.objects.filter(profile=obj), many=True).data
 
     class Meta:
         model = Profile
@@ -100,7 +119,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileLiteSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Profile
         fields = '__all__'

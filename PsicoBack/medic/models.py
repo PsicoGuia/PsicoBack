@@ -138,9 +138,30 @@ class Studies(models.Model):
         return '%s - %s: %s' % (self.getUserName(), self.getLevel(), self.title)
 
 
+class AttentionChannel(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    title = models.TextField(null=False, blank=False)
+    description = models.TextField(null=True, blank=True)
+    # schedules = models.ManyToManyField(ScheduleAttentionChannel)
+    # images = models.ManyToManyField(ImageAttentionChannel)
+
+    position = PointField(geography=False, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    city = models.TextField(null=True, blank=True)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    # class Meta:
+    #     abstract = True
+
+    def __str__(self):
+        return '%s: %s' % (self.pk, self.description)
+
+
 class ScheduleAttentionChannel(models.Model):
     # 0- None, 1-Monday, 5-Monday and Wendesday
-    # attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
+    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE, null=True, blank=True)
     bitDays = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -155,7 +176,7 @@ class ScheduleAttentionChannel(models.Model):
 
 
 class ImageAttentionChannel(models.Model):
-    # attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
+    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(upload_to=profileFilePath)
 
     created = models.DateTimeField(auto_now_add=True)
@@ -163,26 +184,6 @@ class ImageAttentionChannel(models.Model):
 
     def __str__(self):
         return '%s: %s' % (self.pk, self.image)
-
-
-class AttentionChannel(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    description = models.TextField(null=True, blank=True)
-    schedules = models.ManyToManyField(ScheduleAttentionChannel)
-    images = models.ManyToManyField(ImageAttentionChannel)
-
-    position = PointField(geography=False, null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
-    city = models.TextField(null=True, blank=True)
-
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        return '%s: %s' % (self.pk, self.description)
 
 
 class Office(AttentionChannel):

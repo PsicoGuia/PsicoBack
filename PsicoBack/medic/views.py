@@ -22,14 +22,16 @@ from rest_framework.decorators import parser_classes, permission_classes
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Profile, Studies, Office, Chat,\
+from .models import Profile, Studies, Office, Chat, HomeVisit,\
     CategoryPatology, Patology, ProfilePatologyOrCategory,\
-    RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel
+    RequestOrderMedicDate, AttentionChannel, ScheduleAttentionChannel, \
+    ImageAttentionChannel
 from .serealizer import ProfileSerializer, StudiesSerializer, \
-    OfficeSerializer, ChatSerializer, CategoryPatologySerializer, \
+    OfficeSerializer, HomeVisitSerializer, ChatSerializer, CategoryPatologySerializer, \
     PatologySerializer, ProfilePatologyOrCategorySerializer, \
     RequestOrderMedicDateSerializer, ScheduleAttentionChannelSerializer, \
-    ImageAttentionChannelSerializer, ProfileLiteSerializer
+    ImageAttentionChannelSerializer, ProfileLiteSerializer, \
+    AttentionChannelSerializer
 
 # Create your views here.
 
@@ -60,7 +62,7 @@ def profile(request, username):
             if form.is_valid():
                 print(':.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.')
                 print(request.POST)
-                print(form)
+                print(form)HomeVisitSerializer
         profile = Profile.objects.get(user__username=username)
         print('profile id')
         print(profile.id)
@@ -106,7 +108,7 @@ class ProfilesFilter(django_filters.FilterSet):
     patology__in = django_filters.BaseInFilter(
         field_name='profilepatologyorcategory__patology_id', distinct=True,
         lookup_expr='in')
-   
+
     class Meta:
         model = Profile
         # get defaults fields + custom
@@ -180,6 +182,20 @@ class ChatDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = (authentication.TokenAuthentication,)
 
 
+class HomeVisitListView(generics.ListCreateAPIView):
+    queryset = HomeVisit.objects.all()
+    serializer_class = HomeVisitSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
+class HomeVisitDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = HomeVisit.objects.all()
+    serializer_class = HomeVisitSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
 class CategoryPatologyListView(generics.ListAPIView):
     queryset = CategoryPatology.objects.all()
     serializer_class = CategoryPatologySerializer
@@ -230,6 +246,20 @@ class RequestOrderMedicDateListView(generics.ListCreateAPIView):
 class RequestOrderMedicDateDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = RequestOrderMedicDate.objects.all()
     serializer_class = RequestOrderMedicDateSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
+class AttentionChannelListView(generics.ListCreateAPIView):
+    queryset = AttentionChannel.objects.all()
+    serializer_class = AttentionChannelSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
+class AttentionChannelDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = AttentionChannel.objects.all()
+    serializer_class = AttentionChannelSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 
