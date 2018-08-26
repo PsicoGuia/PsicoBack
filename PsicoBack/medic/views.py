@@ -22,12 +22,12 @@ from rest_framework.decorators import parser_classes, permission_classes
 from rest_framework.parsers import JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Profile, Studies, Office, Chat,\
+from .models import Profile, Studies, Office, Chat, HomeVisit,\
     CategoryPatology, Patology, ProfilePatologyOrCategory,\
     RequestOrderMedicDate, AttentionChannel, ScheduleAttentionChannel, \
     ImageAttentionChannel
 from .serealizer import ProfileSerializer, StudiesSerializer, \
-    OfficeSerializer, ChatSerializer, CategoryPatologySerializer, \
+    OfficeSerializer, HomeVisitSerializer, ChatSerializer, CategoryPatologySerializer, \
     PatologySerializer, ProfilePatologyOrCategorySerializer, \
     RequestOrderMedicDateSerializer, ScheduleAttentionChannelSerializer, \
     ImageAttentionChannelSerializer, ProfileLiteSerializer, \
@@ -62,7 +62,7 @@ def profile(request, username):
             if form.is_valid():
                 print(':.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.:.')
                 print(request.POST)
-                print(form)
+                print(form)HomeVisitSerializer
         profile = Profile.objects.get(user__username=username)
         print('profile id')
         print(profile.id)
@@ -178,6 +178,20 @@ class ChatListView(generics.ListCreateAPIView):
 class ChatDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
+class HomeVisitListView(generics.ListCreateAPIView):
+    queryset = HomeVisit.objects.all()
+    serializer_class = HomeVisitSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (authentication.TokenAuthentication,)
+
+
+class HomeVisitDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = HomeVisit.objects.all()
+    serializer_class = HomeVisitSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (authentication.TokenAuthentication,)
 

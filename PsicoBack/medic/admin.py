@@ -6,7 +6,8 @@ from address.forms import AddressWidget
 
 from .models import Profile, Studies, Office, Chat, HomeVisit,\
     CategoryPatology, Patology, ProfilePatologyOrCategory,\
-    RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel
+    RequestOrderMedicDate, ScheduleAttentionChannel, ImageAttentionChannel, \
+    AttentionChannel
 
 
 @admin.register(Profile)
@@ -58,6 +59,7 @@ class ProfileInline(admin.StackedInline):
 #         )
 
 
+admin.site.register(AttentionChannel)
 admin.site.register(ScheduleAttentionChannel)
 admin.site.register(ImageAttentionChannel)
 admin.site.register(Office)

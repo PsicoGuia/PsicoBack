@@ -140,7 +140,7 @@ class Studies(models.Model):
 
 class AttentionChannel(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    titulo = models.TextField(null=False, blank=False)
+    title = models.TextField(null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     # schedules = models.ManyToManyField(ScheduleAttentionChannel)
     # images = models.ManyToManyField(ImageAttentionChannel)
@@ -161,7 +161,7 @@ class AttentionChannel(models.Model):
 
 class ScheduleAttentionChannel(models.Model):
     # 0- None, 1-Monday, 5-Monday and Wendesday
-    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
+    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE, null=True, blank=True)
     bitDays = models.IntegerField()
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
@@ -176,7 +176,7 @@ class ScheduleAttentionChannel(models.Model):
 
 
 class ImageAttentionChannel(models.Model):
-    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE)
+    attention_channel = models.ForeignKey(AttentionChannel, on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(upload_to=profileFilePath)
 
     created = models.DateTimeField(auto_now_add=True)
