@@ -178,6 +178,7 @@ CORS_ORIGIN_WHITELIST = (
     'psicoguia.co',
 )
 CSRF_TRUSTED_ORIGINS = (
-    'psicoguia.co',
+    'https://psicoguia.co',
+    'https://www.psicoguia.co',
     'api.psicoguia.co',
 )
