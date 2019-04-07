@@ -7,6 +7,7 @@ django-geoposition==0.3.0
 django-money==0.13.2
 django-rest-auth==0.9.3
 django-widget-tweaks==1.4.2
+django-cors-headers==2.5.2
 djangorestframework==3.8.2
 djangorestframework-gis==0.13
 pep8==1.7.1

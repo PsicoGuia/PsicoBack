@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # 'geoposition',
     'address',
     'widget_tweaks',
+    'corsheaders',
 
     'medic',
     'crm',
@@ -54,13 +55,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'PsicoBack.urls'
@@ -170,3 +172,12 @@ EMAIL_PORT = 587
 
 # POSTGIS
 POST_GIS_MAX_DISTANCE_SEARCH = 500
+
+# ENABLE CORS
+CORS_ORIGIN_WHITELIST = (
+    'psicoguia.co',
+)
+CSRF_TRUSTED_ORIGINS = (
+    'psicoguia.co',
+    'api.psicoguia.co',
+)
