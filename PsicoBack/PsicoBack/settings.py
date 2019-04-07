@@ -175,7 +175,8 @@ POST_GIS_MAX_DISTANCE_SEARCH = 500
 
 # ENABLE CORS
 CORS_ORIGIN_WHITELIST = (
-    'psicoguia.co',
+    'https://psicoguia.co',
+    'https://www.psicoguia.co',
 )
 CSRF_TRUSTED_ORIGINS = (
     'https://psicoguia.co',
